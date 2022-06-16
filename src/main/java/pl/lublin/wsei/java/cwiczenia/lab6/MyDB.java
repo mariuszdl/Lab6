@@ -11,6 +11,7 @@ public class MyDB {
     private String user;
     private String password;
     private Connection conn = null;
+    private Statement statement = null;
 
     public MyDB(String host, Number port, String dbName) {
         this.host = host;
@@ -44,6 +45,7 @@ public class MyDB {
 
         try {
             conn = DriverManager.getConnection(jdbcString, connectionProps);
+            statement = conn.createStatement();
         } catch (SQLException e) {
             System.out.println("Błąd podłączenia do bazy: " + jdbcString);
             System.out.println("Komunikat błędu: " + e.getMessage());
@@ -51,6 +53,17 @@ public class MyDB {
         }
 
         System.out.println("Connected to database " + dbName);
+    }
+
+    public ResultSet selectData(String selectStatement) {
+        if ((conn != null) && (statement != null)) {
+            try {
+                return statement.executeQuery(selectStatement);
+            } catch (SQLException e) {
+                System.out.println("Błąd realizacji zapytania: " + selectStatement + ", " + e.getMessage());
+            }
+        }
+        return null;
     }
 
     public Connection getConnection() {
